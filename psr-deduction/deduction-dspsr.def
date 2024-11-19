@@ -9,6 +9,10 @@ From: deduction-pulsar.sif
 #     DSPSR
 #*******************
 %post
+    export INSTALL_DIR=/usr/local
+    export LD_LIBRARY_PATH=${INSTALL_DIR}/lib:${LD_LIBRARY_PATH}
+    ldconfig
+    export CXXFLAGS=-I/usr/local/include/Pulsar
     cd ${INSTALL_DIR}/src && git clone git://git.code.sf.net/p/dspsr/code dspsr
     cd dspsr && ./bootstrap
     echo "apsr asp bcpm bpsr caspsr cpsr cpsr2 dada dummy fits gmrt guppi kat lbadr lbadr64 lofar_dal lump lwa mark4 mark5 mark5b maxim mwa pdev pmdaq puma2 s2 sigproc ska1 spda1k spigot vdif" > backends.list
@@ -16,6 +20,16 @@ From: deduction-pulsar.sif
     ./configure PYTHON=/usr/bin/python3 --prefix=${INSTALL_DIR} --enable-shared --with-x --with-hdf5-incdir=/usr/include/hdf5/serial --with-hdf5-libdir=/usr/lib/x86_64-linux-gnu/hdf5/serial --x-includes=/usr/include/X11 --x-libraries=/usr/lib/x86_64-linux-gnu
     make -j${NP} && make install && make distclean
 
+%environment
+    export INSTALL_DIR=/usr/local
+    export PATH=${INSTALL_DIR}/bin:${PATH}
+    export LD_LIBRARY_PATH=${INSTALL_DIR}/lib:${LD_LIBRARY_PATH}
+    export PYTHONPATH=${INSTALL_DIR}/lib/python3/dist-packages
+    export LANG=en_US.UTF-8
+    export LANGUAGE=en_US.UTF-8
+    export LC_ALL=en_US.UTF-8
+    export TEMPO2=/usr/local/share/tempo2
+    
 %labels
     Author Vlad Kondratiev
     Version v0.92
