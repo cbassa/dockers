@@ -9,8 +9,8 @@ From: deduction-pre-pulsar.sif
 #      PSRCAT 
 #*******************
 %post
-    cd ${INSTALL_DIR}/src && wget --retry-connrefused --no-check-certificate https://www.atnf.csiro.au/research/pulsar/psrcat/downloads/psrcat_pkg.tar.gz
-    tar xvfz psrcat_pkg.tar.gz && rm -f psrcat_pkg.tar.gz && cd psrcat_tar
+    export INSTALL_DIR=/usr/local
+    cd ${INSTALL_DIR}/src && wget --retry-connrefused --no-check-certificate https://www.atnf.csiro.au/research/pulsar/psrcat/downloads/psrcat_pkg.tar.gz && tar xvfz psrcat_pkg.tar.gz && rm -f psrcat_pkg.tar.gz && cd psrcat_tar
     sed -i -e 's|/usr/bin/gcc|/usr/bin/gcc -fcommon|g' makeit
     /bin/bash ./makeit
     cd ${INSTALL_DIR}/lib && ln -sf ${INSTALL_DIR}/src/psrcat_tar/libpsrcat.a .
@@ -97,6 +97,7 @@ From: deduction-pre-pulsar.sif
 #     PSRCHIVE
 #*******************
 %post
+    export LD_LIBRARY_PATH=${INSTALL_DIR}/lib:${LD_LIBRARY_PATH}
     cd ${INSTALL_DIR}/src && git clone http://git.code.sf.net/p/psrchive/code psrchive
     cd psrchive && ./bootstrap
     #./configure PYTHON=/usr/bin/python3 --prefix=${INSTALL_DIR} --enable-shared --with-x --with-psrcat=psrcat --with-psrxml-dir=${INSTALL_DIR}/lib --with-eigen-include-dir=${INSTALL_DIR}/include/eigen3 --with-eigen-dir=${INSTALL_DIR}/src/eigen --with-splinter-lib-dir=${INSTALL_DIR}/lib --with-splinter-include-dir=${INSTALL_DIR}/inclide/SPLINTER --x-libraries=/usr/lib/x86_64-linux-gnu --x-includes=/usr/include/X11 --with-mpi --with-mpi-inc-dir=/usr/include/x86_64-linux-gnu/mpich --with-mpi-lib-dir=/usr/lib/x86_64-linux-gnu
@@ -234,6 +235,25 @@ From: deduction-pre-pulsar.sif
     cd gausspy
     python3 setup.py install
     sed -i s/np.float/float/g /usr/lib/python3/dist-packages/lmfit/models.py
+
+#*******************
+#   clfd  
+#*******************
+%post
+    pip3 install --prefix=${INSTALL_DIR} clfd
+
+%environment
+    export INSTALL_DIR=/usr/local
+    export PATH=${INSTALL_DIR}/bin:${PATH}
+    export LD_LIBRARY_PATH=${INSTALL_DIR}/lib:${LD_LIBRARY_PATH}
+    export PYTHONPATH=${INSTALL_DIR}/lib/python3/dist-packages
+    export PSRCHIVE_CONFIG=/usr/local/etc/psrchive.cfg
+    export LANG=en_US.UTF-8
+    export LANGUAGE=en_US.UTF-8
+    export LC_ALL=en_US.UTF-8
+    export TEMPO=/usr/local/src/tempo
+    export TEMPO2=/usr/local/share/tempo2
+ 
 
 %labels
     Author Vlad Kondratiev
